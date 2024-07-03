@@ -1,13 +1,18 @@
 # Web-App-Cost-Effective-Fine-Tuning
 
-This repository contains the code used for the article A Web Application for a Cost-Effective Fine-Tuning of Open-Source LLMs in Education published at https://link.springer.com/chapter/10.1007/978-3-031-64312-5_32.
+This repository contains the files for the article [A Web Application for a Cost-Effective Fine-Tuning of Open-Source LLMs in Education](https://link.springer.com/chapter/10.1007/978-3-031-64312-5_32).
 
-The files named "requirements_llm.txt" and "requirements_web_app.txt" contain the libraries that must be downloaded to develop the web application.
+## Contents
 
-The files named "app.py" and "celery_utils.py" contain the code written to develop the web application.
+- `requirements_llm.txt`: Libraries required for the Large Language Model fine-tuning and inference.
+- `requirements_web_app.txt`: Libraries required for the web application.
+- `app.py`: Main code for the web application.
+- `celery_utils.py`: Utility functions for Celery integration.
+- `templates/`: Contains HTML templates.
+- `static/css/`: Contains CSS files.
+- `ipynbs/`: Contains Jupyter notebooks.
+  - `threads.ipynb`: Notebook to launch the web application.
+ 
+## Usage
 
-The folder named "templates" contains the HTML templates.
-
-The folder named "static/css" contains the CSS file.
-
-The folder named "ipynbs" contains the files written to develop the web application. Specifically, the file name "threads.ipynb" is the one that must be executed to launch the web application.
+Run the `threads.ipynb` to start the web application.
