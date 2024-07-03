@@ -1,0 +1,15 @@
+amqp
+billiard
+blinker
+celery
+Click
+Flask
+itsdangerous
+Jinja2
+kombu
+MarkupSafe
+pytz
+redis
+vine
+Werkzeug
+ngrok
