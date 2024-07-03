@@ -3,7 +3,7 @@
 	<head>
     		<meta charset="UTF-8">
     		<title>DocencIA-Inferencia</title>
-			<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/css_stylesheet.css') }}">
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/css_stylesheet.css') }}">
 	</head>
 	<body>
 		<div class="margin">
@@ -33,14 +33,14 @@
 			<br>
 		</div>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/nanobar/0.2.1/nanobar.min.js"></script>
-    	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 		<script>
 			function download_inference() {
 				var llm_name = document.getElementById('llm_name');
 				var formData = new FormData();
-            	formData.append('llm_name', llm_name.value);
+            			formData.append('llm_name', llm_name.value);
 	
-            	var progressDiv = $('#progress');
+            			var progressDiv = $('#progress');
 				var progressBar = $('<div class="progress-bar"></div>').appendTo(progressDiv);
 				var progressText = $('<div class="progress-text">0%</div>').appendTo(progressDiv);
 				var statusText = $('<div class="status-text">...</div>').appendTo(progressDiv);
@@ -51,60 +51,60 @@
 					target: progressBar[0]
 				});
 	
-            	$.ajax({
-                	type: 'POST',
-                	url: '/downloadinference',
+            			$.ajax({
+                			type: 'POST',
+                			url: '/downloadinference',
 					data: formData,
 					processData: false,
-                	contentType: false,
-                	success: function(data, status, request) {
-                    	status_url = request.getResponseHeader('Location');
-                    	update_progress(status_url, nanobar, progressText, statusText, resultText);
-                	},
-                	error: function() {
-                    	alert('Unexpected error');
-                	}
-            	});
-        	}
+                			contentType: false,
+                			success: function(data, status, request) {
+                    				status_url = request.getResponseHeader('Location');
+                    				update_progress(status_url, nanobar, progressText, statusText, resultText);
+                			},
+                			error: function() {
+                    				alert('Unexpected error');
+                			}
+            			});
+        		}
 
 			function run_inference() {
 				var question = document.getElementById('question');
 				var formData = new FormData();
-            	formData.append('question', question.value);
+            			formData.append('question', question.value);
 	
-            	$.ajax({
-                	type: 'POST',
-                	url: '/runinference',
+            			$.ajax({
+                			type: 'POST',
+                			url: '/runinference',
 					data: formData,
 					processData: false,
-                	contentType: false,
-                	success: function(data, status, request) {
+                			contentType: false,
+                			success: function(data, status, request) {
 						$("#inference_answer").append('<div class="questions">Pregunta: ' + question.value + '</div>');
 						question.value = '';
-                    	status_url = request.getResponseHeader('Location');
-                    	update_progress_without_bar(status_url);
-                	},
-                	error: function() {
-                    	alert('Unexpected error');
-                	}
-            	});
-        	}
+                    				status_url = request.getResponseHeader('Location');
+                    				update_progress_without_bar(status_url);
+                			},
+                			error: function() {
+                    				alert('Unexpected error');
+                			}
+            			});
+        		}
 
 			function end_inference() {
-            	$.ajax({
-                	type: 'POST',
-                	url: '/endinference',
+            			$.ajax({
+                			type: 'POST',
+                			url: '/endinference',
 					processData: false,
-                	contentType: false,
-                	success: function(data, status, request) {
-                    	status_url = request.getResponseHeader('Location');
-                    	update_progress_without_bar(status_url);
-                	},
-                	error: function() {
-                    	alert('Unexpected error');
-                	}
-            	});
-        	}
+                			contentType: false,
+                			success: function(data, status, request) {
+                    				status_url = request.getResponseHeader('Location');
+                    				update_progress_without_bar(status_url);
+                			},
+                			error: function() {
+                    				alert('Unexpected error');
+                			}
+            			});
+        		}
         		
 			function update_progress(status_url, nanobar, progressText, statusText, resultText) {
 				$.getJSON(status_url, function(data) {
@@ -119,7 +119,7 @@
 							var div_end_inference_button = document.getElementById("end_inference_button");
 							div_end_inference_button.style.display = "block";
 						} else {
-                	        resultText.text('Error: ' + data['state']);
+                	        			resultText.text('Error: ' + data['state']);
 						}
 					} else {
 						setTimeout(function() {
@@ -130,24 +130,24 @@
 			}
 
 			function update_progress_without_bar(status_url) {
-            	$.getJSON(status_url, function(data) {
-        	        if (data['state'] != 'PENDING' && data['state'] != 'PROGRESS') {
+            			$.getJSON(status_url, function(data) {
+        	        		if (data['state'] != 'PENDING' && data['state'] != 'PROGRESS') {
 						if (data['state'] == 'FINISH') {
 							if (data['result'] == 1002) {
 								$("#end").text('Inferencia terminada correctamente. Cierra la pestaña.');
 							} else {
-                        		$("#inference_answer").append('<div class="answers">Respuesta:\n<pre>' + data['result'] + '</pre></div>');
-                    		}
+                        					$("#inference_answer").append('<div class="answers">Respuesta:\n<pre>' + data['result'] + '</pre></div>');
+                    					}
 						} else {
-                	        $("#inference_answer").append('<div class="answers">Error: ' + data['state'] + '</div>');
+                	        			$("#inference_answer").append('<div class="answers">Error: ' + data['state'] + '</div>');
 						}
 					} else {
-                	    setTimeout(function() {
-                        	update_progress_without_bar(status_url);
-                    	}, 2000);
-	                }
-        	    });
-       	 	}
+                	    			setTimeout(function() {
+                        				update_progress_without_bar(status_url);
+                    				}, 2000);
+	                		}
+        	    		});
+       	 		}
 		</script>
 	</body>
 </html>
