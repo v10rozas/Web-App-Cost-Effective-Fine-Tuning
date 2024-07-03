@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+	<head>
+    		<meta charset="UTF-8">
+    		<title>DocencIA</title>
+			<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/css_stylesheet.css') }}">
+	</head>
+	<body>
+		<div class="margin">
+			<h1>DocencIA</h1>
+			<h3>Selecciona la tarea que quieres realizar:</h3>
+			<div id="div_button_main">
+				<input type="button" class="button_main" value="Ajustar LLM" onclick="fine_tuning()">
+				<input type="button" class="button_main" value="Inferencia con el LLM ajustado" onclick="inference()">
+			</div>
+		</div>
+		<script>
+			function fine_tuning() {
+				window.location.href = "fine_tuning_page.html";
+			}
+			
+			function inference() {
+				window.location.href = "run_inference_page.html";
+			}
+    		</script>
+	</body>
+</html>

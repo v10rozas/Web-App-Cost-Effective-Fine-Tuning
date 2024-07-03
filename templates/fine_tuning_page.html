@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+	<head>
+    		<meta charset="UTF-8">
+    		<title>DocencIA-Fine-tuning</title>
+			<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/css_stylesheet.css') }}">
+	</head>
+	<body>
+		<div class="margin">
+			<h1>Fine-tuning</h1>
+			<h3>Esta página está habilitada para ajustar el LLM.</h3>
+			<div class="sub_margin">
+				<form id="form_ds_and_llm_name" method="post" enctype="multipart/form-data">
+					<label>Por favor, introduce el conjunto de datos en formato CSV:</label>
+					<input type="file" name="dataset" id="dataset" accept=".csv" required>
+					<br>
+					<br>
+					<label>Por favor, introduce el nombre que quieres dar al LLM ajustado:</label>
+					<input type="text" name="llm_name" id="llm_name" placeholder="Escribe el nombre del LLM..." style="width: 400px; height: 20px;">
+					<br>
+					<br>
+					<input class="button_form" type="button" value="Enviar" onclick="start_fine_tune()">
+				</form>
+			</div>
+			<div id="progress"></div>
+		</div>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/nanobar/0.2.1/nanobar.min.js"></script>
+    	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    	<script>
+        	function start_fine_tune() {
+				var fileInput = document.getElementById('dataset');
+				var llm_name = document.getElementById('llm_name');
+				var formData = new FormData();
+				formData.append('dataset', fileInput.files[0]);
+				formData.append('llm_name', llm_name.value);
+
+				var progressDiv = $('#progress');
+				var progressBar = $('<div class="progress-bar"></div>').appendTo(progressDiv);
+				var progressText = $('<div class="progress-text">0%</div>').appendTo(progressDiv);
+				var statusText = $('<div class="status-text">...</div>').appendTo(progressDiv);
+				var resultText = $('<div class="result-text">&nbsp;</div>').appendTo(progressDiv);
+
+				var nanobar = new Nanobar({
+					bg: '#44f',
+					target: progressBar[0]
+				});
+
+				$.ajax({
+					type: 'POST',
+					url: '/finetunellm',
+					data: formData,
+					processData: false,
+					contentType: false,
+					success: function(data, status, request) {
+						status_url = request.getResponseHeader('Location');
+						update_progress(status_url, nanobar, progressText, statusText, resultText);
+					},
+					error: function() {
+						alert('Error inesperado');
+					}
+				});
+			}
+
+			function update_progress(status_url, nanobar, progressText, statusText, resultText) {
+				$.getJSON(status_url, function(data) {
+					percent = parseInt(data['current'] * 100 / data['total']);
+					nanobar.go(percent);
+					progressText.text(percent + '%');
+					statusText.text(data['status']);
+					if (data['state'] != 'PENDING' && data['state'] != 'PROGRESS') {
+						if (data['state'] == 'FINISH' && data['result'] == 1003) {
+							resultText.text('Fine-tuning terminado correctamente. Cierra la pestaña.');
+						} else {
+							resultText.text('Error: ' + data['state']);
+						}
+					} else {
+						setTimeout(function() {
+							update_progress(status_url, nanobar, progressText, statusText, resultText);
+						}, 2000);
+					}
+				});
+			}
+    	</script>
+	</body>
+</html>

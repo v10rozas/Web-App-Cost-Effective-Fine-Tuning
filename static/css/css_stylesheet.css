@@ -1,0 +1,98 @@
+body {
+    background-color: #efefef;
+    font-family: Monaco;
+}
+
+.margin {
+    border: 2px solid rgb(54, 164, 44);
+    margin-top: 20px;
+    margin-bottom: 20px;
+	padding-left: 20px;
+    padding-right: 20px;
+    min-height: 90vh;
+}
+
+.sub_margin {
+    border: 2px solid rgba(54, 164, 44, 0.636);
+    margin-top: 40px;
+    margin-bottom: 40px;
+    margin-left: 20px;
+    margin-right: 20px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+	padding-left: 20px;
+    padding-right: 20px;
+}
+
+h1,h3,div {
+    padding-top: 10px;
+    padding-left: 20px;
+}
+
+#div_button_main {
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.button_main {
+    background-color: rgba(54, 164, 44, 0.31);
+    font-size: 15px;
+    font-family: Monaco;
+    cursor: pointer;
+    padding-top: 15px;
+    padding-right: 15px;
+    padding-bottom: 15px;
+    padding-left: 15px;
+    margin-right: 200px;
+    margin-left: 200px;
+    border: 2px solid rgb(54, 164, 44);
+}
+
+.button_main:active {
+    background-color: rgba(54, 164, 44, 0.636); 
+}
+
+#form_fine_tuning {
+    font-size: 15px;
+}
+
+.button_form {
+    background-color: rgba(54, 164, 44, 0.31);
+    font-family: Monaco;
+    cursor: pointer;
+    border: 2px solid rgba(54, 164, 44, 0.636);
+}
+
+.button_form:active{
+    background-color: rgba(54, 164, 44, 0.636); 
+}
+
+.progress-bar {
+    margin-bottom: 40px;
+    max-width: 90%;
+}
+
+.questions {
+    border: 2px solid rgb(8, 123, 218);
+    margin-top: 40px;
+    margin-bottom: 40px;
+    margin-left: 20px;
+    margin-right: 20px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+	padding-left: 20px;
+    padding-right: 20px;
+}
+
+.answers {
+    border: 2px solid rgb(221, 149, 16);
+    margin-top: 40px;
+    margin-bottom: 40px;
+    margin-left: 20px;
+    margin-right: 20px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+	padding-left: 20px;
+    padding-right: 20px;
+}

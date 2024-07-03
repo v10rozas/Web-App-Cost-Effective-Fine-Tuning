@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+	<head>
+    		<meta charset="UTF-8">
+    		<title>DocencIA-Inferencia</title>
+			<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/css_stylesheet.css') }}">
+	</head>
+	<body>
+		<div class="margin">
+			<h1>Inferencia</h1>
+			<h3>Esta página está habilitada para comunicarse con los LLMs ajustados.</h3>
+			<div class="sub_margin">
+				<form id="form_llm_name" method="post" enctype="multipart/form-data">
+					<label>Por favor, introduce el nombre del LLM con el que quieres contactar: </label>
+					<input type="text" name="llm_name" id="llm_name" placeholder="Escribe el nombre del LLM..." style="width: 400px; height: 20px;">
+					<input class="button_form" type="button" value="Enviar" onclick="download_inference()">
+				</form>
+			</div>
+			<div id="progress"></div>
+			<div id="inference_form" style="display: none;">
+				<form id="form_question" method="post" enctype="multipart/form-data">
+					<label>Por favor, introduce la pregunta: </label>
+					<input type="text" name="question" id="question" placeholder="Escribe la pregunta..." style="width: 400px; height: 20px;">
+					<input class="button_form" type="button" value="Enviar" onclick="run_inference()">
+				</form>
+			</div>
+			<div id="inference_answer"></div>
+			<div id="end_inference_button" style="display: none;">
+				<input class="button_form" type="button" value="Finalizar inferencia" onclick="end_inference()">
+				<label id="end"></label>
+			</div>
+			<br>
+			<br>
+		</div>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/nanobar/0.2.1/nanobar.min.js"></script>
+    	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+		<script>
+			function download_inference() {
+				var llm_name = document.getElementById('llm_name');
+				var formData = new FormData();
+            	formData.append('llm_name', llm_name.value);
+	
+            	var progressDiv = $('#progress');
+				var progressBar = $('<div class="progress-bar"></div>').appendTo(progressDiv);
+				var progressText = $('<div class="progress-text">0%</div>').appendTo(progressDiv);
+				var statusText = $('<div class="status-text">...</div>').appendTo(progressDiv);
+				var resultText = $('<div class="result-text">&nbsp;</div>').appendTo(progressDiv);
+
+				var nanobar = new Nanobar({
+					bg: '#44f',
+					target: progressBar[0]
+				});
+	
+            	$.ajax({
+                	type: 'POST',
+                	url: '/downloadinference',
+					data: formData,
+					processData: false,
+                	contentType: false,
+                	success: function(data, status, request) {
+                    	status_url = request.getResponseHeader('Location');
+                    	update_progress(status_url, nanobar, progressText, statusText, resultText);
+                	},
+                	error: function() {
+                    	alert('Unexpected error');
+                	}
+            	});
+        	}
+
+			function run_inference() {
+				var question = document.getElementById('question');
+				var formData = new FormData();
+            	formData.append('question', question.value);
+	
+            	$.ajax({
+                	type: 'POST',
+                	url: '/runinference',
+					data: formData,
+					processData: false,
+                	contentType: false,
+                	success: function(data, status, request) {
+						$("#inference_answer").append('<div class="questions">Pregunta: ' + question.value + '</div>');
+						question.value = '';
+                    	status_url = request.getResponseHeader('Location');
+                    	update_progress_without_bar(status_url);
+                	},
+                	error: function() {
+                    	alert('Unexpected error');
+                	}
+            	});
+        	}
+
+			function end_inference() {
+            	$.ajax({
+                	type: 'POST',
+                	url: '/endinference',
+					processData: false,
+                	contentType: false,
+                	success: function(data, status, request) {
+                    	status_url = request.getResponseHeader('Location');
+                    	update_progress_without_bar(status_url);
+                	},
+                	error: function() {
+                    	alert('Unexpected error');
+                	}
+            	});
+        	}
+        		
+			function update_progress(status_url, nanobar, progressText, statusText, resultText) {
+				$.getJSON(status_url, function(data) {
+					percent = parseInt(data['current'] * 100 / data['total']);
+					nanobar.go(percent);
+					progressText.text(percent + '%');
+					statusText.text(data['status']);
+					if (data['state'] != 'PENDING' && data['state'] != 'PROGRESS') {
+						if (data['state'] == 'FINISH' && data['result'] == 1001) {
+							var div_inference_form = document.getElementById("inference_form");
+							div_inference_form.style.display = "block";
+							var div_end_inference_button = document.getElementById("end_inference_button");
+							div_end_inference_button.style.display = "block";
+						} else {
+                	        resultText.text('Error: ' + data['state']);
+						}
+					} else {
+						setTimeout(function() {
+							update_progress(status_url, nanobar, progressText, statusText, resultText);
+						}, 2000);
+					}
+				});
+			}
+
+			function update_progress_without_bar(status_url) {
+            	$.getJSON(status_url, function(data) {
+        	        if (data['state'] != 'PENDING' && data['state'] != 'PROGRESS') {
+						if (data['state'] == 'FINISH') {
+							if (data['result'] == 1002) {
+								$("#end").text('Inferencia terminada correctamente. Cierra la pestaña.');
+							} else {
+                        		$("#inference_answer").append('<div class="answers">Respuesta:\n<pre>' + data['result'] + '</pre></div>');
+                    		}
+						} else {
+                	        $("#inference_answer").append('<div class="answers">Error: ' + data['state'] + '</div>');
+						}
+					} else {
+                	    setTimeout(function() {
+                        	update_progress_without_bar(status_url);
+                    	}, 2000);
+	                }
+        	    });
+       	 	}
+		</script>
+	</body>
+</html>
