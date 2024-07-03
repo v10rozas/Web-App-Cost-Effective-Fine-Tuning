@@ -16,3 +16,8 @@ This repository contains the files for the article [A Web Application for a Cost
 ## Usage
 
 Run the `threads.ipynb` to start the web application.
+
+## Contact
+
+For any inquiries or support, please contact [100451534@alumnos.uc3m.es](mailto:100451534@alumnos.uc3m.es).
+
